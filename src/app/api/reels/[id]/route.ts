@@ -1,34 +1,26 @@
 // GET /api/reels/[id]
 
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 
-const reels = [
-  {
-    id: "serena-williams",
-    title: "Serena Williams Career Highlights",
-    s3Url: "https://your-s3-bucket-url.com/serena.mp4",
-    sport: "Tennis",
-    duration: "60s",
-  },
-  {
-    id: "messi",
-    title: "Messi: The GOAT Story",
-    s3Url: "https://your-s3-bucket-url.com/messi.mp4",
-    sport: "Football",
-    duration: "60s",
-  },
-];
+import { reels } from "@/app/data"; //import dummy data
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const {
-    query: { id },
-  } = req;
+export const GET = async (
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) => {
+  const { id } = params;
+  try {
+    const reel = reels.find((r) => r.id === id);
+    if (!reel) {
+      return NextResponse.json({ message: "Reel not found" }, { status: 404 });
+    }
 
-  const reel = reels.find((r) => r.id === id);
-
-  if (!reel) {
-    res.status(404).json({ message: "Reel not found" });
-  } else {
-    res.status(200).json(reel);
+    return NextResponse.json(reel, { status: 200 });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      { message: "Something went wrong!" },
+      { status: 500 }
+    );
   }
-}
+};

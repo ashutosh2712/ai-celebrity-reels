@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from "react";
+"use client";
+
+import { Pause, Play } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
 type Reel = {
@@ -32,27 +35,83 @@ const Reels = () => {
 };
 
 function ReelItem({ reel }: { reel: Reel }) {
-  const { ref, inView } = useInView({
-    threshold: 0.7, // play only if 70% in view
-    triggerOnce: false,
-  });
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const { ref, inView } = useInView({ threshold: 0.7 });
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showControls, setShowControls] = useState(true);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (inView) {
+      video.play();
+      setIsPlaying(true);
+    } else {
+      video.pause();
+      setIsPlaying(false);
+    }
+  }, [inView]);
+
+  const togglePlay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Enable sound on user interaction
+    video.muted = false;
+
+    if (video.paused) {
+      video.play();
+      setIsPlaying(true);
+    } else {
+      video.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const handleVideoClick = () => {
+    // Toggle control visibility on tap
+    setShowControls((prev) => !prev);
+  };
 
   return (
     <div
       ref={ref}
-      className="h-screen snap-start flex flex-col items-center justify-center relative"
+      className="relative h-screen w-full snap-start flex items-center justify-center"
     >
       <video
+        ref={videoRef}
         src={reel.s3Url}
         className="w-full h-full object-cover"
-        autoPlay={inView}
         muted
         loop
         playsInline
+        onClick={handleVideoClick}
       />
-      <div className="absolute bottom-10 left-5 text-white text-xl font-bold bg-black/50 px-3 py-1 rounded">
+
+      {/* Title */}
+      <div className="absolute bottom-20 left-4 text-white text-xl font-bold bg-black/50 px-4 py-2 rounded-lg">
         {reel.title}
       </div>
+
+      {/* Custom play/pause control, only visible if showControls is true */}
+      {showControls && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            togglePlay();
+          }}
+          className="absolute inset-0 flex items-center justify-center"
+        >
+          <div className="bg-white/20 hover:bg-white/30 transition backdrop-blur-md rounded-full p-4">
+            {isPlaying ? (
+              <Pause className="w-8 h-8 text-white" />
+            ) : (
+              <Play className="w-8 h-8 text-white" />
+            )}
+          </div>
+        </button>
+      )}
     </div>
   );
 }

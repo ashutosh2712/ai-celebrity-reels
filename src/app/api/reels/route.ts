@@ -1,29 +1,17 @@
 // GET /api/reels
 
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 
-// Dummy data
-const reels = [
-  {
-    id: "serena-williams",
-    title: "Serena Williams Career Highlights",
-    s3Url: "https://your-s3-bucket-url.com/serena.mp4",
-    sport: "Tennis",
-    duration: "60s",
-  },
-  {
-    id: "messi",
-    title: "Messi: The GOAT Story",
-    s3Url: "https://your-s3-bucket-url.com/messi.mp4",
-    sport: "Football",
-    duration: "60s",
-  },
-];
+import { reels } from "@/app/data";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === "GET") {
-    res.status(200).json(reels);
-  } else {
-    res.status(405).json({ message: "Method not allowed" });
+export const GET = async (req: NextRequest, res: NextResponse) => {
+  try {
+    return new NextResponse(JSON.stringify(reels), { status: 200 });
+  } catch (error) {
+    console.log("reels fetch error:", error);
+    return new NextResponse(
+      JSON.stringify({ message: "Something went wrong!" }),
+      { status: 500 }
+    );
   }
-}
+};
