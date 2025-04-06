@@ -1,31 +1,57 @@
-// POST /api/generate
+// POST /api/reels/generate
 
-import { NextApiRequest, NextApiResponse } from "next";
+export const runtime = "nodejs";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
+import { fetchCelebrityImages } from "@/libs/pexels";
+// import { generateRunwayVideo } from "@/libs/runway";
+import { generateTTSAndUpload } from "@/libs/tts";
+import { createVideoFromAssets } from "@/libs/video";
+import { NextRequest, NextResponse } from "next/server";
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY, // From.env file
+});
+
+export const POST = async (req: NextRequest) => {
+  const { celebrity } = await req.json();
+
+  if (!celebrity) {
+    return NextResponse.json(
+      { message: "Celebrity is required" },
+      { status: 400 }
+    );
   }
 
-  const { celebrityName } = req.body;
+  try {
+    const images = await fetchCelebrityImages(celebrity);
+    const prompt = `Write a 60-second script in a fun, engaging tone about the history and highlights of ${celebrity}'s sports career. Use short, punchy sentences.`;
 
-  if (!celebrityName) {
-    return res.status(400).json({ message: "Celebrity name is required" });
+    const response = await openai.chat.completions.create({
+      model: "gpt-4", // or 'gpt-3.5-turbo'
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.8,
+    });
+
+    const script = response.choices[0]?.message?.content || "";
+
+    const audioUrl = await generateTTSAndUpload(script);
+    // console.log("audioUrl:", audioUrl);
+
+    //const runwayVideoUrl = await generateRunwayVideo(script, images[0]); // optional image
+    const videoUrl = await createVideoFromAssets(images.slice(0, 5), audioUrl);
+
+    return NextResponse.json({
+      script,
+      audioUrl,
+      images,
+      videoUrl: videoUrl,
+    });
+  } catch (error) {
+    console.error("OpenAI Error:", error);
+    return NextResponse.json(
+      { message: "Failed to generate script" },
+      { status: 500 }
+    );
   }
-
-  // TODO: Call OpenAI to generate script
-  // TODO: TTS with Polly
-  // TODO: Generate visuals or use RunwayML
-  // TODO: Combine audio/video and upload to S3
-
-  // Simulated response
-  return res.status(200).json({
-    message: `Generation triggered for ${celebrityName}`,
-    videoUrl: `https://your-s3-bucket-url.com/${celebrityName
-      .toLowerCase()
-      .replace(" ", "-")}.mp4`,
-  });
-}
+};

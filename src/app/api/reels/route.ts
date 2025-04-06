@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-import { reels } from "@/app/data";
+import { reels } from "@/data";
 
 export const GET = async (req: NextRequest, res: NextResponse) => {
   try {
