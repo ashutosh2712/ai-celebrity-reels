@@ -1,7 +1,7 @@
 // // GET /api/reels/[id]
 
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
@@ -11,8 +11,11 @@ const s3 = new S3Client({
   },
 });
 
-export const GET = async ({ params }: { params: { id: string } }) => {
-  const { id } = params;
+export const GET = async (
+  req: NextRequest,
+  context: { params: { id: string } }
+) => {
+  const { id } = context.params;
 
   try {
     const getCommand = new GetObjectCommand({
