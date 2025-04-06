@@ -34,11 +34,34 @@ export async function createVideoFromAssets(
       const buffer = Buffer.from(arrayBuffer);
 
       //const buffer = await res.buffer();
-      const imgPath = path.join(tempDir.name, `img${i}.jpg`);
+      //const imgPath = path.join(tempDir.name, `img${i}.jpg`);
+      const imgPath = path.join(
+        tempDir.name,
+        `img${String(i).padStart(3, "0")}.jpg`
+      );
+
       fs.writeFileSync(imgPath, buffer);
       return imgPath;
     })
   );
+
+  const inputListPath = path.join(tempDir.name, "input.txt");
+  const imageDuration = 60 / imagePaths.length; // Adjust based on audio length if needed
+
+  let inputTxt = "";
+  for (let i = 0; i < imagePaths.length; i++) {
+    const imgPath = imagePaths[i].replace(/\\/g, "/");
+    inputTxt += `file '${imgPath}'\n`;
+    inputTxt += `duration ${imageDuration}\n`;
+  }
+
+  // FFmpeg requires last image to be repeated once without duration
+  inputTxt += `file '${imagePaths[imagePaths.length - 1].replace(
+    /\\/g,
+    "/"
+  )}'\n`;
+
+  fs.writeFileSync(inputListPath, inputTxt);
 
   // Step 2: Download audio
   const audioRes = await fetch(audioUrl);
@@ -67,18 +90,18 @@ export async function createVideoFromAssets(
   // Step 3: Create slideshow video with audio
   await new Promise((resolve, reject) => {
     ffmpeg()
-      .addInput(`concat:${imagePaths.join("|")}`)
-      .inputOptions(["-loop 1"])
+      .input(path.join(tempDir.name, "img%03d.jpg"))
+      .inputOptions(["-framerate", `${1 / imageDuration}`])
       .input(audioPath)
       .complexFilter([`[0:v]fps=25,scale=720:1280,format=yuv420p[v]`])
       .outputOptions([
         "-map",
-        "[v]", // map processed video
+        "[v]",
         "-map",
-        "1:a", // map audio from 2nd input
+        "1:a",
         "-shortest",
         "-movflags",
-        "+faststart", // for web playback
+        "+faststart",
         "-pix_fmt",
         "yuv420p",
       ])
@@ -95,6 +118,15 @@ export async function createVideoFromAssets(
   const videoBuffer = fs.readFileSync(outputPath);
   const videoUrl = await uploadToS3(videoBuffer, "mp4");
 
-  tempDir.removeCallback();
-  return videoUrl;
+  const finalUrl = videoUrl;
+  setTimeout(() => {
+    try {
+      tempDir.removeCallback();
+      console.log("Cleaned up temp files");
+    } catch (e) {
+      console.warn("Temp cleanup failed:", e);
+    }
+  }, 1000);
+
+  return finalUrl;
 }
