@@ -80,6 +80,7 @@ export const POST = async (req: NextRequest) => {
     //   //portraitImage,
     //   videoUrl: videoUrl,
     // });
+    console.log("Sending response to client...");
     return NextResponse.json({ ...metadata });
   } catch (error) {
     console.error(" Error while generating ai video:", error);
