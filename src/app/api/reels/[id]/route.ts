@@ -1,7 +1,7 @@
 // // GET /api/reels/[id]
 
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
