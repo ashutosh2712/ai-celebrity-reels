@@ -58,11 +58,9 @@ export const GET = async (
     const metadata = JSON.parse(json);
 
     return NextResponse.json(metadata, { status: 200 });
-  } catch (err: any) {
-    if (err.name === "NoSuchKey") {
-      return NextResponse.json({ message: "Reel not found" }, { status: 404 });
-    }
-    console.error("Error loading reel metadata:", err);
+  } catch (err) {
+    const error = err as { name?: string; message?: string };
+    console.error("Error loading reel metadata:", error);
     return NextResponse.json(
       { message: "Failed to load reel" },
       { status: 500 }

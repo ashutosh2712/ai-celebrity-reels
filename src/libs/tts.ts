@@ -31,9 +31,9 @@ export async function generateTTSAndUpload(
 }
 
 // helper
-function streamToBuffer(stream: any): Promise<Buffer> {
+function streamToBuffer(stream: Readable): Promise<Buffer> {
   return new Promise((resolve, reject) => {
-    const chunks: any[] = [];
+    const chunks: Buffer[] = [];
 
     const readable = Readable.from(stream);
 
