@@ -37,9 +37,9 @@ const s3 = new S3Client({
 
 export const GET = async (
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) => {
-  const { id } = params;
+  const { id } = context.params;
 
   try {
     const getCommand = new GetObjectCommand({
