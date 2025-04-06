@@ -25,7 +25,7 @@ export async function generateTTSAndUpload(
   });
 
   const { AudioStream } = await polly.send(command);
-  const buffer = await streamToBuffer(AudioStream as ReadableStream);
+  const buffer = await streamToBuffer(AudioStream as Readable);
 
   return await uploadToS3(buffer, "mp3");
 }
