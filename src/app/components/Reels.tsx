@@ -7,9 +7,11 @@ import { useInView } from "react-intersection-observer";
 type Reel = {
   id: string;
   title: string;
-  s3Url: string;
-  sport: string;
-  duration: string;
+  videoUrl: string;
+  audioUrl: string;
+  script: string;
+  images: string[];
+  createdAt: string;
 };
 
 const Reels = () => {
@@ -19,6 +21,7 @@ const Reels = () => {
     const fetchReels = async () => {
       const res = await fetch("/api/reels");
       const data = await res.json();
+      console.log("data", data);
       setReels(data);
     };
 
@@ -44,9 +47,22 @@ function ReelItem({ reel }: { reel: Reel }) {
     const video = videoRef.current;
     if (!video) return;
 
+    const tryPlay = async () => {
+      try {
+        await video.play();
+        setIsPlaying(true);
+      } catch (err) {
+        console.warn("Autoplay failed:", err);
+      }
+    };
+
     if (inView) {
-      video.play();
-      setIsPlaying(true);
+      // Only play when ready
+      if (video.readyState >= 3) {
+        tryPlay();
+      } else {
+        video.oncanplay = tryPlay;
+      }
     } else {
       video.pause();
       setIsPlaying(false);
@@ -81,7 +97,7 @@ function ReelItem({ reel }: { reel: Reel }) {
     >
       <video
         ref={videoRef}
-        src={reel.s3Url}
+        src={reel.videoUrl}
         className="w-full h-full object-cover"
         muted
         loop

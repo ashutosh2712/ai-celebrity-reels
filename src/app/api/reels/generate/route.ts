@@ -5,6 +5,7 @@ export const runtime = "nodejs";
 //import { generateDidVideo } from "@/libs/did";
 //import { rehostImageToS3 } from "@/libs/s3";
 import { fetchCelebrityImages } from "@/libs/pexels";
+import { uploadMetadata } from "@/libs/s3-metadata";
 // import { generateRunwayVideo } from "@/libs/runway";
 import { generateTTSAndUpload } from "@/libs/tts";
 import { createVideoFromAssets } from "@/libs/video";
@@ -58,13 +59,28 @@ export const POST = async (req: NextRequest) => {
     //   script
     // );
 
-    return NextResponse.json({
+    const videoId = celebrity.toLowerCase().replace(/\s+/g, "-");
+
+    const metadata = {
+      id: videoId,
+      title: `${celebrity}: AI Sports Reel`,
       script,
+      videoUrl,
       audioUrl,
       images,
-      //portraitImage,
-      videoUrl: videoUrl,
-    });
+      createdAt: new Date().toISOString(),
+    };
+
+    await uploadMetadata(metadata, videoId);
+
+    // return NextResponse.json({
+    //   script,
+    //   audioUrl,
+    //   images,
+    //   //portraitImage,
+    //   videoUrl: videoUrl,
+    // });
+    return NextResponse.json({ ...metadata });
   } catch (error) {
     console.error(" Error while generating ai video:", error);
     return NextResponse.json(
