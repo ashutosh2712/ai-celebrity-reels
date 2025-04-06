@@ -27,6 +27,10 @@ An AI-driven web application that generates and showcases engaging history reels
 
 ---
 
+## 🔗 Deployment
+
+Live app: https://ai-celebrity-reels.vercel.app/
+
 ## 📂 Folder Structure
 ```bash
 src/ ├── app/ │ ├── page.tsx # Landing page │ ├── reels/page.tsx # Reels view │ └── api/reels/ # API routes (list, generate) ├── components/Reels.tsx # Reels UI component ├── libs/ # Helpers (tts, s3, pexels, video generation) └── data/ # Optional: placeholder data
