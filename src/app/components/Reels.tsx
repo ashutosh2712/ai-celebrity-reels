@@ -20,9 +20,15 @@ const Reels = () => {
   useEffect(() => {
     const fetchReels = async () => {
       const res = await fetch("/api/reels");
-      const data = await res.json();
-      console.log("data", data);
-      setReels(data);
+      const data: Reel[] = await res.json();
+
+      // Sort by createdAt descending (newest first)
+      const sorted = data.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      setReels(sorted);
     };
 
     fetchReels();
