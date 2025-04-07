@@ -63,10 +63,31 @@ AWS_BUCKET_NAME=ai-celebrity-reels
 PEXELS_API_KEY=your-pexels-api-key
 ```
  ### 4. Run locally
+
+ #### ✅ Prerequisites
+
+- [Node.js](https://nodejs.org/)
+- [Docker](https://www.docker.com/)
+- API Keys from:
+  - [OpenAI](https://platform.openai.com/)
+  - [Amazon Polly (AWS)](https://aws.amazon.com/polly/)
+  - [Pexels](https://www.pexels.com/api/)
+  - [AWS S3 Bucket](https://aws.amazon.com/s3/)
  
 ```bash
 npm run dev
 ```
+
+### 🐳 Run with Docker
+
+#### 1. Create `.env.production` file
+
+#### 2. 📦 Run with Docker Compose
+
+```bash
+docker-compose -f docker-compose.yml up --build -d
+```
+
 ## 🧪 API Endpoints
 
 ```bash
