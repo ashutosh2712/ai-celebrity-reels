@@ -1,36 +1,123 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏏 AI-Powered Sports Celebrity Reels
 
-## Getting Started
+An AI-driven web application that generates and showcases engaging history reels of famous sports celebrities. Built with Next.js, OpenAI, Amazon Polly, Pexels, FFmpeg, and AWS S3.
 
-First, run the development server:
 
+
+---
+
+## 🚀 Features
+
+- 🎬 **AI-Generated Reels**: Generate 60-second videos using OpenAI-generated scripts and Polly-generated voiceovers.
+- 🧠 **Script + Audio + Video Automation**: Fully automated pipeline from text → audio → slideshow video using FFmpeg.
+- 📸 **Smart Image Fetching**: Uses Pexels API to fetch relevant images for each athlete.
+- 🧊 **Video Storage**: Final videos and metadata are stored on AWS S3.
+- 📱 **Mobile-First UI**: TikTok-style vertical reels layout with play/pause and scroll.
+- ⚡ **Built with Next.js App Router**: Deployed seamlessly on Vercel.
+
+---
+
+## 🧑‍💻 Tech Stack
+
+- **Frontend**: Next.js 13+ (App Router), Tailwind CSS
+- **AI & TTS**: OpenAI GPT-4, Amazon Polly
+- **Media**: FFmpeg (via fluent-ffmpeg), Pexels API
+- **Storage**: AWS S3
+- **Deployment**: Vercel
+
+---
+
+## 🔗 Deployment
+
+Live app: https://ai-celebrity-reels.vercel.app/
+
+## 📂 Folder Structure
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+src/ ├── app/ │ ├── page.tsx # Landing page │ ├── reels/page.tsx # Reels view │ └── api/reels/ # API routes (list, generate) ├── components/Reels.tsx # Reels UI component ├── libs/ # Helpers (tts, s3, pexels, video generation) └── data/ # Optional: placeholder data
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Setup Instructions
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. Clone the repository
 
-## Learn More
+```bash
+git clone https://github.com/yourusername/ai-sports-reels.git
+cd ai-sports-reels
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 2. Install dependencies
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm install
+```
+### 3. Add .env.local
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+OPENAI_API_KEY=your-openai-key
+AWS_ACCESS_KEY_ID=your-aws-access-key
+AWS_SECRET_ACCESS_KEY=your-aws-secret
+AWS_REGION=us-east-1
+AWS_BUCKET_NAME=ai-celebrity-reels
+PEXELS_API_KEY=your-pexels-api-key
+```
+ ### 4. Run locally
+ 
+```bash
+npm run dev
+```
+## 🧪 API Endpoints
 
-## Deploy on Vercel
+```bash
+GET /api/reels
+```
+Returns all available AI-generated video metadata.
+```bash
+GET /api/reels/[id]
+```
+Returns a single video by ID.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+POST /api/reels/generate
+```
+Triggers the AI → Audio → Video → Upload pipeline.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+{
+  "celebrity": "MS Dhoni"
+}
+```
+## 🧾 Deployment Notes
+### ✅ Hosted on Vercel
+
+#### ❌ FFmpeg is not available on Vercel — video generation handled locally or on a backend service.
+
+#### Store metadata as JSON files in S3 for serverless-friendly querying.
+
+## 🧠 Future Enhancements
+### AI face animation using D-ID or DeepMotion
+
+### Speech-to-subtitle rendering
+
+### Public sharing and reactions
+
+### Admin UI to trigger & moderate reel generation
+
+## 📸 Credits
+### OpenAI for script generation
+
+### Amazon Polly for voice synthesis
+
+### Pexels for sports imagery
+
+### AWS S3 for media storage
+
+### FFmpeg for video generation
+
+## 📜 License
+MIT License. © 2025 Ashutosh
+
+
+
+
