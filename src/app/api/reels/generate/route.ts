@@ -3,13 +3,13 @@
 export const runtime = "nodejs";
 
 //import { generateDidVideo } from "@/libs/did";
-//import { rehostImageToS3 } from "@/libs/s3";
+import { rehostImageToS3 } from "@/libs/s3";
 import { fetchCelebrityImages } from "@/libs/pexels";
 import { uploadMetadata } from "@/libs/s3-metadata";
 // import { generateRunwayVideo } from "@/libs/runway";
 import { generateTTSAndUpload } from "@/libs/tts";
 import { createVideoFromAssets } from "@/libs/video";
-//import { fetchWikipediaPortrait } from "@/libs/wikipedia";
+import { fetchWikipediaPortrait } from "@/libs/wikipedia";
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
@@ -38,12 +38,12 @@ export const POST = async (req: NextRequest) => {
 
     const script = response.choices[0]?.message?.content || "";
     //console.log("script:", script);
-    const images = await fetchCelebrityImages(`${celebrity} face portrait`);
-    //const portraitImage = await fetchWikipediaPortrait(celebrity);
+    //const images = await fetchCelebrityImages(`${celebrity} face portrait`);
+    const portraitImage = await fetchWikipediaPortrait(celebrity);
     //console.log("portraitImage:", portraitImage);
 
-    //if (!portraitImage) throw new Error("No portrait found");
-
+    if (!portraitImage) throw new Error("No portrait found");
+    const portraitImages = [portraitImage];
     // Rehost the image before passing to D-ID
     //const rehostedImageUrl = await rehostImageToS3(images[0]);
     //console.log("rehostedImageUrl:", rehostedImageUrl);
@@ -52,7 +52,7 @@ export const POST = async (req: NextRequest) => {
     // console.log("audioUrl:", audioUrl);
 
     //const runwayVideoUrl = await generateRunwayVideo(script, images[0]); // optional image
-    const videoUrl = await createVideoFromAssets(images.slice(0, 5), audioUrl);
+    const videoUrl = await createVideoFromAssets(portraitImages, audioUrl);
     // const didVideoUrl = await generateDidVideo(
     //   rehostedImageUrl,
     //   audioUrl,
@@ -67,7 +67,7 @@ export const POST = async (req: NextRequest) => {
       script,
       videoUrl,
       audioUrl,
-      images,
+      images: portraitImages,
       createdAt: new Date().toISOString(),
     };
 
