@@ -9,15 +9,16 @@ import fetch from "node-fetch";
 import { uploadToS3 } from "./s3";
 
 // Resolve executable manually instead of relying on broken require()
-const ffmpegPath = path.resolve(
-  process.cwd(),
-  "node_modules",
-  "ffmpeg-static",
-  process.platform === "win32" ? "ffmpeg.exe" : "ffmpeg"
-);
+// const ffmpegPath = path.resolve(
+//   process.cwd(),
+//   "node_modules",
+//   "ffmpeg-static",
+//   process.platform === "win32" ? "ffmpeg.exe" : "ffmpeg"
+// );
 
-ffmpeg.setFfmpegPath(ffmpegPath);
-console.log("Using FFmpeg at:", ffmpegPath);
+//ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfmpegPath("/usr/bin/ffmpeg");
+//console.log("Using FFmpeg at:", ffmpegPath);
 
 export async function createVideoFromAssets(
   images: string[],
