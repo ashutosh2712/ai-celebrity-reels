@@ -3,8 +3,8 @@
 export const runtime = "nodejs";
 
 //import { generateDidVideo } from "@/libs/did";
-import { rehostImageToS3 } from "@/libs/s3";
-import { fetchCelebrityImages } from "@/libs/pexels";
+//import { rehostImageToS3 } from "@/libs/s3";
+//import { fetchCelebrityImages } from "@/libs/pexels";
 import { uploadMetadata } from "@/libs/s3-metadata";
 // import { generateRunwayVideo } from "@/libs/runway";
 import { generateTTSAndUpload } from "@/libs/tts";
